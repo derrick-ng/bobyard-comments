@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres
+    container_name: bobyard_comments_db_derrick
+    environment:
+      POSTGRES_DB: bobyard_comments_derrick
+      POSTGRES_USER: bobyard_derrick
+      POSTGRES_PASSWORD: bobyard_derrick
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+  
