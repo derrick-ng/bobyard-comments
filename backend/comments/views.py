@@ -1,13 +1,18 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Comment
 from .serializers import CommentSerializer
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
 
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    ordering_fields = ['date', 'id']
+    ordering = ['-date']
+
     def list(self, request):
-        comments = self.get_queryset()
+        comments = self.filter_queryset(self.get_queryset())
         serializer = CommentSerializer(comments, many=True)
 
         return Response(serializer.data)

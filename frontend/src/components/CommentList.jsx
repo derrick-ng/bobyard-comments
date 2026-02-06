@@ -7,15 +7,29 @@ export default function CommentList() {
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState("");
 
+  const [sortBy, setSortBy] = useState("newestComment");
+
   const API_URL = "http://localhost:8000/api/comments/";
 
   useEffect(() => {
     fetchComments();
-  }, []);
+  }, [sortBy]);
 
   async function fetchComments() {
+    let url = API_URL;
+
+    if (sortBy === "newestComment") {
+      url += "?ordering=-date";
+    } else if (sortBy === "oldestComment") {
+      url += "?ordering=date";
+    } else if (sortBy === "firstComment") {
+      url += "?ordering=id";
+    } else if (sortBy === "lastComment") {
+      url += "?ordering=-id";
+    }
+
     try {
-      const response = await axios.get(API_URL);
+      const response = await axios.get(url);
       setComments(response.data);
     } catch (error) {
       console.error("Error fetching comments", error);
@@ -72,6 +86,15 @@ export default function CommentList() {
     <div className="mx-auto p-6 max-w-4xl">
       <h1 className="text-2xl text-center font-bold">Comments Section</h1>
       <h2 className="text-lg mb-4">{comments.length} Comments</h2>
+
+      <div>
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="newestComment">Newest Comment</option>
+          <option value="oldestComment">Oldest Comment</option>
+          <option value="firstComment">First Comment</option>
+          <option value="lastComment">Last Comment</option>
+        </select>
+      </div>
 
       {/* Add comment */}
       <form className="mb-10" onSubmit={handleAddComment}>
